@@ -103,6 +103,7 @@ import {connect} from 'react-redux'
 
 import {register} from '../../redux/actions'
 import Logo from '../../componnets/logo/logo'
+import '../../componnets/error/error.less'
 
 const ListItem = List.Item
 
@@ -127,7 +128,7 @@ class Register extends Component {
 
   // 注册的回调
   register = () => {
-    console.log(this.state)
+    // console.log(this.state)
     this.props.register(this.state)
   }
 
@@ -142,7 +143,7 @@ class Register extends Component {
     // 如果redirectTo有值, 就需要自动跳转到对应的路径
     if(redirectTo) {
       // render函数中需要自动跳转
-      return <Redirect to={redirectTo}></Redirect>
+      return <Redirect to={redirectTo}/>
     }
 
     return (

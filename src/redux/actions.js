@@ -5,25 +5,39 @@
  */
 import {
   reqRegister,
-  reqLogin
+  reqLogin,
+  reqUpdateUser,
 } from '../api'
 
 import {
   AUTH_SUCCESS,
-  ERROR_MSG
+  ERROR_MSG,
+  RECEIVE_USER,
+  RESET_USER,
 } from './action-types'  // 有几个action type就会定义几个同步action
 
 // 注册/登陆成功的同步action
 const authSuccess = (user) => ({type: AUTH_SUCCESS, data:user})
 // 注册/登陆失败的同步action
 const errorMsg = (msg) => ({type: ERROR_MSG, data:msg})
-
+const receiveUser = (user) =>({type:RECEIVE_USER,data:user})
+const resetUser = (msg) =>({type:RESET_USER,data:msg})
 
 
 /*
 注册的异步action
  */
-export function register({username, password, type}) {
+export function register({username, password,password2, type}) {
+  //表单验证
+  if(!username) {
+    return errorMsg('必须指定用户名')
+  } else if (!password) {
+    return errorMsg('必须指定密码')
+  } else if (password2!==password) {
+    return errorMsg('密码必须一致')
+  } else if (!type) {
+    return errorMsg('必须指定用户类型')
+  }
   return dispatch => {
     // 发异步ajax请求注册
     reqRegister({username, password, type}).then(response => {
@@ -40,13 +54,20 @@ export function register({username, password, type}) {
     })
   }
 }
-
 /*
 登陆的异步action
  */
 export function login(username, password) {
+  return dispatch =>{
+    if(!username){
+      return dispatch(errorMsg('必须指定用户名'))
+    }else if(!password){
+      return dispatch(errorMsg('必须指定密码'))
+    }
+  }
+
   return dispatch => {
-    // 发异步ajax请求注册
+    // 发异步ajax请求登录
     reqLogin(username, password).then(response => {
       const result = response.data // {code:0/1, msg: '', data: user}
       if(result.code==0) { // 成功了
@@ -59,5 +80,21 @@ export function login(username, password) {
         dispatch(errorMsg(msg))
       }
     })
+  }
+}
+/*
+更新异步的action
+ */
+export function updateUser(user) {
+  return async dispatch =>{
+    const response = await reqUpdateUser(user)
+    const result = response.data;
+    if(result.code === 0){
+      const user = result.data
+      dispatch(receiveUser(user))
+    }else{
+      const msg = result.msg
+      dispatch(resetUser(msg))
+    }
   }
 }
