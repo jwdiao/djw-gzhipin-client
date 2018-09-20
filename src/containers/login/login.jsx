@@ -180,7 +180,6 @@ class Login extends Component {
 
   // 登陆的回调
   login = () => {
-    // console.log(this.state)
     const {username, password} = this.state
     this.props.login(username, password)
   }
