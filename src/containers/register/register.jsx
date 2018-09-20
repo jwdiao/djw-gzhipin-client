@@ -103,7 +103,7 @@ import {connect} from 'react-redux'
 
 import {register} from '../../redux/actions'
 import Logo from '../../componnets/logo/logo'
-import '../../componnets/error/error.less'
+import '../../componnets/css/error/error.less'
 
 const ListItem = List.Item
 

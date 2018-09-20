@@ -5,6 +5,7 @@ import React, {Component} from 'react'
 import {Switch,Route,Redirect} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import {NavBar} from 'antd-mobile'
+import {connect} from 'react-redux'
 
 import LaobanInfo from '../laoban-info/laoban-info'
 import DashenInfo from '../dashen-info/dashen-info'
@@ -12,10 +13,9 @@ import Laoban from '../laoban/laoban'
 import Dashen from '../dashen/dashen'
 import Message from '../message/message'
 import Personal from '../personal/personal'
-import {connect} from 'react-redux'
-
 import NavFooter from '../../componnets/nav-footer/nav-footer'
-
+import {getUser} from '../../redux/actions'
+import UserList from '../../componnets/user-list/user-list'
 class Main extends Component {
 
   navList = [
@@ -49,12 +49,30 @@ class Main extends Component {
     }
   ]
 
+  //这里是发送ajax请求
+  componentDidMount(){
+    const userid = Cookies.get('userid')
+    const {_id} = this.props.user
+    if(userid && !_id){
+      this.props.getUser()
+    }
+  }
+
   render () {
     //使用Cookie这个库, 来解决查找用户名的地址值
+    //1.判断cookie里面是否有userid,如果没有就自动跳转到登录页面
     const userid = Cookies.get('userid')
     if(!userid){
       return <Redirect to = '/login'/>
     }
+    //2.如果cookie里面有userid,就从redux中找,如果redux没有user_id,发送异步请求,从cookies中获取保存到redux中
+    //但是发送ajax请求不能在render()中发送
+    const {user}  = this.props
+    if(!user._id){
+      return <div>loading....</div>
+    }
+    //3.如果redux中有user信息,如果请求的是应用根目录,就自动调转到想对应的主界面中
+
 
     const navList = this.navList
 
@@ -82,6 +100,7 @@ class Main extends Component {
           <Route path='/dashen' component={Dashen}/>
           <Route path='/message' component={Message}/>
           <Route path='/personal' component={Personal}/>
+          {/*<Route path='/userlist' component ={UserList}/>*/}
         </Switch>
 
         {currentNav ? <NavFooter navList={this.navList}/> : null}
@@ -92,5 +111,5 @@ class Main extends Component {
 }
 export default connect(
   state => ({user:state.user}),
-  {}
+  {getUser}
 )(Main)

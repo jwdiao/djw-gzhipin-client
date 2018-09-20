@@ -4,6 +4,8 @@ import {TabBar} from 'antd-mobile'
 import {withRouter} from 'react-router-dom'
 //withRouter是包裹在一般组件navList外,使其变为路由组件
 //未包裹时,props是一个一般的组件,没有其属性;传递路由相关属性: history/location/match
+
+import '../../componnets/css/nav-bottom/nav-bottom.less'
 const Item = TabBar.Item
 
 class NavFooter extends Component {
